@@ -16,7 +16,7 @@ class ServerReader extends Thread {
     public void run() {
         try {
             while (true) {
-                out.println(serverInput.readUTF());
+                out.print(serverInput.readUTF());
             }
         } catch (IOException e) {
             out.println("[Client] : message read error");
@@ -44,37 +44,29 @@ public class Main {
             out.println("Connected");
             serverOutput.writeUTF(userName);
 
-            MenuAlgorithm();
+            ServerReader serverReader = new ServerReader(serverInput);
+            serverReader.start();
+
+            String message;
+
+            while (true) {
+                message = scanner.nextLine();
+
+                if (message.equals("EXIT"))
+                    break;
+
+                serverOutput.writeUTF(message);
+            }
+
+            socket.close();
+            serverOutput.close();
+            serverInput.close();
+            serverReader.interrupt();
 
         } catch (IOException e) {
 
         } finally {
             out.println("Disconnected");
         }
-    }
-
-    public static void MenuAlgorithm() throws IOException {
-        String answer;
-
-        while (!socket.isClosed()) {
-            out.println();
-            out.println();
-            out.println(serverInput.readUTF());         //getting default message
-            out.print("set : ");
-            serverOutput.writeUTF(scanner.nextLine());  //sending command
-            out.println();
-            answer = serverInput.readUTF();             //getting answer
-
-            if (answer.equals("START CHAT"))
-                ChatAlgorithm();
-            else out.println(answer);
-        }
-    }
-
-    public static void ChatAlgorithm() throws IOException {
-
-//        ServerReader serverReader = new ServerReader(serverInput);
-//        serverReader.start();
-//        serverOutput.writeUTF(scanner.nextLine());
     }
 }
