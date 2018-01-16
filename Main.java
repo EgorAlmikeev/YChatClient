@@ -20,6 +20,7 @@ class ServerReader extends Thread {
             }
         } catch (IOException e) {
             out.println("[Client] : message read error");
+            System.exit(1);
         }
     }
 }
@@ -64,7 +65,7 @@ public class Main {
             serverReader.interrupt();
 
         } catch (IOException e) {
-
+            e.printStackTrace();
         } finally {
             out.println("Disconnected");
         }
